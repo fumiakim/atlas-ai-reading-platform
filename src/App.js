@@ -1,13 +1,129 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
+const wordVisuals = {
+  b01:{ e1:'✨', e2:'👁️',  bg:'#E3F2FD', ac:'#1565C0', tags:['引き付ける','魅了','注目'] },
+  b02:{ e1:'🤔', e2:'❓',  bg:'#F3E5F5', ac:'#6A1B9A', tags:['疑念','懐疑','不信'] },
+  b03:{ e1:'🌟', e2:'😲',  bg:'#FFFDE7', ac:'#F57F17', tags:['驚異','称賛','驚嘆'] },
+  b04:{ e1:'🎭', e2:'🌫️',  bg:'#EDE7F6', ac:'#4527A0', tags:['幻想','錯覚','虚偽'] },
+  b05:{ e1:'✅', e2:'🔎',  bg:'#E8F5E9', ac:'#1B5E20', tags:['確認','検証','承認'] },
+  b06:{ e1:'🚀', e2:'⚙️',  bg:'#E3F2FD', ac:'#0D47A1', tags:['展開','稼働','実装'] },
+  b07:{ e1:'🏗️', e2:'🧱',  bg:'#FFF3E0', ac:'#E65100', tags:['構築','作成','組立'] },
+  b08:{ e1:'⚖️', e2:'🟰',  bg:'#ECEFF1', ac:'#37474F', tags:['中立','偏りなし','公平'] },
+  b09:{ e1:'🔍', e2:'🔬',  bg:'#E0F7FA', ac:'#006064', tags:['調査','検討','探索'] },
+  b10:{ e1:'🌱', e2:'⬆️',  bg:'#E8F5E9', ac:'#2E7D32', tags:['出現','発生','台頭'] },
+  b11:{ e1:'🔒', e2:'⛓️',  bg:'#FFEBEE', ac:'#B71C1C', tags:['制限','束縛','制約'] },
+  b12:{ e1:'📏', e2:'🌐',  bg:'#E3F2FD', ac:'#1565C0', tags:['規模','大きさ','範囲'] },
+  b13:{ e1:'🗂️', e2:'🏷️',  bg:'#FFF3E0', ac:'#BF360C', tags:['分類','整理','グループ化'] },
+  b14:{ e1:'🌊', e2:'💭',  bg:'#E0F2F1', ac:'#00695C', tags:['深い','洞察','重大'] },
+  b15:{ e1:'🎪', e2:'👀',  bg:'#F3E5F5', ac:'#6A1B9A', tags:['見世物','公演','注目'] },
+  b16:{ e1:'🏛️', e2:'⭐',  bg:'#FFFDE7', ac:'#F57F17', tags:['象徴','代表','有名'] },
+  b17:{ e1:'🦅', e2:'🌤️',  bg:'#E1F5FE', ac:'#01579B', tags:['空中','飛行','上空'] },
+  b18:{ e1:'📉', e2:'⬇️',  bg:'#FFEBEE', ac:'#C62828', tags:['劣化','悪化','低下'] },
+  b19:{ e1:'⛰️', e2:'🌾',  bg:'#EFEBE9', ac:'#4E342E', tags:['地形','土地','地域'] },
+  b20:{ e1:'🗺️', e2:'🚶',  bg:'#E0F7FA', ac:'#00695C', tags:['横断','越える','旅'] },
+  b21:{ e1:'🔽', e2:'🌫️',  bg:'#FFF3E0', ac:'#E65100', tags:['縮小','減少','弱まる'] },
+  b22:{ e1:'📦', e2:'🔄',  bg:'#EFEBE9', ac:'#5D4037', tags:['物流','管理','調整'] },
+  b23:{ e1:'🏠', e2:'➡️',  bg:'#E3F2FD', ac:'#0D47A1', tags:['隣接','近接','接続'] },
+  b24:{ e1:'🔲', e2:'📐',  bg:'#E0F7FA', ac:'#006064', tags:['境界','端','外周'] },
+  b25:{ e1:'📡', e2:'🌊',  bg:'#FFF3E0', ac:'#E65100', tags:['拡散','伝達','広める'] },
+  b26:{ e1:'⏱️', e2:'❗',  bg:'#FFEBEE', ac:'#B71C1C', tags:['時点','重大','決定的'] },
+  b27:{ e1:'🏛️', e2:'🪨',  bg:'#ECEFF1', ac:'#37474F', tags:['基盤','基礎','根本'] },
+  b28:{ e1:'🧩', e2:'🗃️',  bg:'#EDE7F6', ac:'#4527A0', tags:['集合','組合せ','集まり'] },
+  b29:{ e1:'🌈', e2:'💎',  bg:'#FCE4EC', ac:'#880E4F', tags:['玉虫色','光輝','虹色'] },
+  b30:{ e1:'🪫', e2:'📉',  bg:'#FFEBEE', ac:'#B71C1C', tags:['枯渇','使い切り','減少'] },
+  i01:{ e1:'🎯', e2:'❌',  bg:'#FFF3E0', ac:'#E65100', tags:['意図せず','偶然','不注意'] },
+  i02:{ e1:'🤖', e2:'❤️',  bg:'#EDE7F6', ac:'#6A1B9A', tags:['擬人化','人間的','投影'] },
+  i03:{ e1:'💡', e2:'❓',  bg:'#FFFDE7', ac:'#F57F17', tags:['仮説','推測','検証待ち'] },
+  i04:{ e1:'💯', e2:'🔷',  bg:'#E3F2FD', ac:'#0D47A1', tags:['自明','当然','公理'] },
+  i05:{ e1:'📋', e2:'🏛️',  bg:'#E8F5E9', ac:'#1B5E20', tags:['公式化','制度化','整備'] },
+  i06:{ e1:'👁️', e2:'🔎',  bg:'#E0F7FA', ac:'#006064', tags:['識別','認識','見分ける'] },
+  i07:{ e1:'🏷️', e2:'📚',  bg:'#FFF3E0', ac:'#BF360C', tags:['命名法','用語体系','分野名'] },
+  i08:{ e1:'📈', e2:'🐢',  bg:'#E8F5E9', ac:'#2E7D32', tags:['段階的','漸進的','少しずつ'] },
+  i09:{ e1:'🔀', e2:'≠',   bg:'#EDE7F6', ac:'#4527A0', tags:['異質','相違','比較不能'] },
+  i10:{ e1:'🤝', e2:'🛑',  bg:'#E3F2FD', ac:'#1565C0', tags:['介入','干渉','改善'] },
+  i11:{ e1:'⚡', e2:'💰',  bg:'#FFEBEE', ac:'#B71C1C', tags:['搾取','不正利用','悪用'] },
+  i12:{ e1:'⚔️', e2:'💬',  bg:'#FFEBEE', ac:'#C62828', tags:['議論','異議','反論'] },
+  i13:{ e1:'🔐', e2:'©️',  bg:'#E3F2FD', ac:'#0D47A1', tags:['独占','専有','非公開'] },
+  i14:{ e1:'🌐', e2:'🫂',  bg:'#E3F2FD', ac:'#1565C0', tags:['包含','網羅','囲む'] },
+  i15:{ e1:'📊', e2:'🆙',  bg:'#FFF3E0', ac:'#E65100', tags:['過大','不釣合い','超過'] },
+  i16:{ e1:'👤', e2:'✨',  bg:'#EDE7F6', ac:'#6A1B9A', tags:['体現','具現化','表現'] },
+  i17:{ e1:'🔖', e2:'🏛️',  bg:'#FFFDE7', ac:'#F57F17', tags:['公認','承認','権威印'] },
+  i18:{ e1:'👑', e2:'⬇️',  bg:'#4A148C', ac:'#CE93D8', tags:['覇権','支配','主導'] },
+  i19:{ e1:'🔗', e2:'🧶',  bg:'#E0F7FA', ac:'#006064', tags:['絡み合う','連結','織込み'] },
+  i20:{ e1:'📚', e2:'🗂️',  bg:'#EFEBE9', ac:'#4E342E', tags:['概要集','総覧','包括的'] },
+  i21:{ e1:'🧸', e2:'🔄',  bg:'#FFFDE7', ac:'#F57F17', tags:['柔軟性','可変性','適応性'] },
+  i22:{ e1:'🐠', e2:'🪟',  bg:'#E1F5FE', ac:'#01579B', tags:['重なり合う','瓦状','層状'] },
+  i23:{ e1:'⚔️', e2:'🏭',  bg:'#E8F5E9', ac:'#1B5E20', tags:['軍備化','武装','軍事化'] },
+  i24:{ e1:'💸', e2:'✂️',  bg:'#ECEFF1', ac:'#37474F', tags:['緊縮','削減','倹約'] },
+  i25:{ e1:'🌑', e2:'🏚️',  bg:'#212121', ac:'#B0BEC5', tags:['暗黒','抑圧','不公正'] },
+  i26:{ e1:'⚖️', e2:'↔️',  bg:'#EDE7F6', ac:'#6A1B9A', tags:['非対称','不均衡','偏り'] },
+  i27:{ e1:'🎨', e2:'💭',  bg:'#E0F7FA', ac:'#006064', tags:['抽象化','概念化','観念'] },
+  i28:{ e1:'✨', e2:'👁️',  bg:'#FFFDE7', ac:'#F9A825', tags:['顕現','表れ','具体化'] },
+  i29:{ e1:'🔄', e2:'🛠️',  bg:'#E3F2FD', ac:'#0D47A1', tags:['再構成','再編成','改変'] },
+  i30:{ e1:'🌳', e2:'❌',  bg:'#EFEBE9', ac:'#4E342E', tags:['根こそぎ','引き離し','追放'] },
+  i31:{ e1:'📉', e2:'💧',  bg:'#FFEBEE', ac:'#B71C1C', tags:['段階的減少','枯渇','取崩し'] },
+  i32:{ e1:'♾️', e2:'🔁',  bg:'#E3F2FD', ac:'#1565C0', tags:['継続','持続','永続化'] },
+  i33:{ e1:'🌍', e2:'🌐',  bg:'#E3F2FD', ac:'#0D47A1', tags:['地球規模','惑星的','全球'] },
+  i34:{ e1:'🏔️', e2:'📐',  bg:'#EFEBE9', ac:'#4E342E', tags:['層化','階層','地層'] },
+  i35:{ e1:'💰', e2:'🚫',  bg:'#FFEBEE', ac:'#B71C1C', tags:['予算削減','撤退','資金停止'] },
+  i36:{ e1:'💻', e2:'👔',  bg:'#E3F2FD', ac:'#1565C0', tags:['技術官僚','専門家支配','技術主導'] },
+  i37:{ e1:'🎲', e2:'💭',  bg:'#FFF3E0', ac:'#E65100', tags:['投機的','推測的','リスク'] },
+  i38:{ e1:'🍞', e2:'⬇️',  bg:'#EFEBE9', ac:'#5D4037', tags:['最低限','ぎりぎり','生存維持'] },
+  i39:{ e1:'🌐', e2:'⚔️',  bg:'#E8EAF6', ac:'#283593', tags:['地政学','国際政治','地理政治'] },
+  i40:{ e1:'💹', e2:'🏦',  bg:'#E8F5E9', ac:'#1B5E20', tags:['資本化','市場価値','資本活用'] },
+  a01:{ e1:'🧠', e2:'📖',  bg:'#EDE7F6', ac:'#4527A0', tags:['認識論','知識理論','知の研究'] },
+  a02:{ e1:'🧬', e2:'⚠️',  bg:'#FFEBEE', ac:'#B71C1C', tags:['優生学','遺伝操作','生殖管理'] },
+  a03:{ e1:'👁️', e2:'🎭',  bg:'#EDE7F6', ac:'#6A1B9A', tags:['主観性','個人的視点','主観'] },
+  a04:{ e1:'⚖️', e2:'🚫',  bg:'#FFEBEE', ac:'#C62828', tags:['超法規的','法外','法を超える'] },
+  a05:{ e1:'🔷', e2:'💎',  bg:'#E0F7FA', ac:'#006064', tags:['物化','具体化','固定化'] },
+  a06:{ e1:'🗻', e2:'📍',  bg:'#EFEBE9', ac:'#4E342E', tags:['地形','地勢','構造'] },
+  a07:{ e1:'🗺️', e2:'✏️',  bg:'#E3F2FD', ac:'#1565C0', tags:['地図製作','地図学','製図'] },
+  a08:{ e1:'🏴', e2:'➡️',  bg:'#1A237E', ac:'#90CAF9', tags:['植民地衝動','支配拡大','征服'] },
+  a09:{ e1:'📏', e2:'💡',  bg:'#E3F2FD', ac:'#1565C0', tags:['規範的','基準設定','あるべき姿'] },
+  a10:{ e1:'🧮', e2:'💡',  bg:'#E0F7FA', ac:'#006064', tags:['合理性','理性','論理的'] },
+  a11:{ e1:'🎯', e2:'📌',  bg:'#EDE7F6', ac:'#6A1B9A', tags:['本質化','固定化','単純化'] },
+  a12:{ e1:'👁️', e2:'⚡',  bg:'#FFFDE7', ac:'#F57F17', tags:['一応','一見','証明前'] },
+  a13:{ e1:'🗺️', e2:'✝️',  bg:'#EFEBE9', ac:'#5D4037', tags:['中世地図','世界観図','宗教地図'] },
+  a14:{ e1:'👥', e2:'💻',  bg:'#E3F2FD', ac:'#1565C0', tags:['社会技術的','社会×技術','相互作用'] },
+  a15:{ e1:'💻', e2:'⚡',  bg:'#E8EAF6', ac:'#283593', tags:['計算集約','処理負荷','高負荷'] },
+  a16:{ e1:'☢️', e2:'🔥',  bg:'#FFEBEE', ac:'#B71C1C', tags:['熱核','核融合','高温核反応'] },
+  a17:{ e1:'💎', e2:'⛏️',  bg:'#E0F7FA', ac:'#006064', tags:['鉱物学','鉱石研究','鉱物科学'] },
+  a18:{ e1:'⬇️', e2:'⚠️',  bg:'#FFF3E0', ac:'#E65100', tags:['不利益','損害原因','悪化要因'] },
+  a19:{ e1:'🌊', e2:'🚢',  bg:'#E1F5FE', ac:'#01579B', tags:['大洋横断','海越え','越洋'] },
+  a20:{ e1:'🌡️', e2:'🌍',  bg:'#E0F7FA', ac:'#006064', tags:['気候学的','気候研究','長期気候'] },
+  a21:{ e1:'⛽', e2:'❌',  bg:'#FFF3E0', ac:'#BF360C', tags:['再生不可能','枯渇資源','有限'] },
+  a22:{ e1:'📝', e2:'🏛️',  bg:'#E8EAF6', ac:'#283593', tags:['報告者','調査報告','任命委員'] },
+  a23:{ e1:'🏢', e2:'💰',  bg:'#37474F', ac:'#B0BEC5', tags:['巨大企業','超大企業','多国籍'] },
+  a24:{ e1:'⚖️', e2:'🧮',  bg:'#E3F2FD', ac:'#1565C0', tags:['論理体系','推論','計算法'] },
+  a25:{ e1:'🧠', e2:'🚫',  bg:'#ECEFF1', ac:'#37474F', tags:['戦略的忘却','都合の悪い記憶','選択的忘却'] },
+  a26:{ e1:'🔀', e2:'🌀',  bg:'#EDE7F6', ac:'#6A1B9A', tags:['無差別','乱雑','選択なし'] },
+  a27:{ e1:'🔄', e2:'⛔',  bg:'#FFEBEE', ac:'#B71C1C', tags:['解決不能','行き詰まり','出口なし'] },
+  a28:{ e1:'🔗', e2:'🌐',  bg:'#E3F2FD', ac:'#1565C0', tags:['超システム','複合システム','統合体'] },
+  a29:{ e1:'👻', e2:'💨',  bg:'#ECEFF1', ac:'#546E7A', tags:['非物質的','身体なし','脱体'] },
+  a30:{ e1:'🌍', e2:'📍',  bg:'#E0F7FA', ac:'#006064', tags:['地理学者','地球研究','地形専門家'] },
+};
+
+const WordVisualCard = ({ wordObj }) => {
+  if (!wordObj) return null;
+  const v = wordVisuals[wordObj.id] || { e1:'📝', e2:'🔤', bg:'#F5F5F5', ac:'#757575', tags:[] };
+  return (
+    <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',display:'block'}}>
+      <rect width="160" height="160" fill={v.bg} rx="16"/>
+      <circle cx="80" cy="80" r="56" fill={v.ac} fillOpacity="0.12"/>
+      <circle cx="80" cy="80" r="44" fill={v.ac} fillOpacity="0.10"/>
+      <text x="56" y="98" fontSize="54" textAnchor="middle">{v.e1}</text>
+      <text x="110" y="52" fontSize="30" textAnchor="middle">{v.e2}</text>
+    </svg>
+  );
+};
+
 const VocabularyApp = () => {
   const [view, setView] = useState('home');
-  // 'home' | 'sections' | 'weak_select' | 'quiz'
   const [screen, setScreen] = useState('home');
   const [difficulty, setDifficulty] = useState(null);
   const [sectionIndex, setSectionIndex] = useState(null);
-  const [quizMode, setQuizMode] = useState('normal'); // 'normal' | 'weak'
+  const [quizMode, setQuizMode] = useState('normal');
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
@@ -18,30 +134,21 @@ const VocabularyApp = () => {
   const [speechRate, setSpeechRate] = useState(0.9);
   const [lastSelected, setLastSelected] = useState(null);
   const [selectedVocab, setSelectedVocab] = useState([]);
+  const [visualModal, setVisualModal] = useState(null);
 
-  // ── localStorage から初期化 ──
   const [scores, setScores] = useState(() => {
-    try { const s = localStorage.getItem('vocab_scores'); return s ? JSON.parse(s) : []; }
-    catch { return []; }
+    try { const s = localStorage.getItem('vocab_scores'); return s ? JSON.parse(s) : []; } catch { return []; }
   });
-  // wordStats: { wordId: { correct: number, total: number } }
   const [wordStats, setWordStats] = useState(() => {
-    try { const s = localStorage.getItem('vocab_word_stats'); return s ? JSON.parse(s) : {}; }
-    catch { return {}; }
+    try { const s = localStorage.getItem('vocab_word_stats'); return s ? JSON.parse(s) : {}; } catch { return {}; }
   });
 
-  // ── localStorage へ書き込み ──
-  useEffect(() => {
-    try { localStorage.setItem('vocab_scores', JSON.stringify(scores)); } catch {}
-  }, [scores]);
-  useEffect(() => {
-    try { localStorage.setItem('vocab_word_stats', JSON.stringify(wordStats)); } catch {}
-  }, [wordStats]);
+  useEffect(() => { try { localStorage.setItem('vocab_scores', JSON.stringify(scores)); } catch {} }, [scores]);
+  useEffect(() => { try { localStorage.setItem('vocab_word_stats', JSON.stringify(wordStats)); } catch {} }, [wordStats]);
 
   const SECTION_SIZE = 5;
 
   const vocabularyData = [
-    // ── BEGINNER 30語 ──
     { id:'b01', word:'Captivate', partOfSpeech:'verb', definition:'To attract and hold the interest or attention of someone completely', japaneseDefinition:'人の興味や注意を完全に引き付ける、魅了する', difficulty:'beginner' },
     { id:'b02', word:'Skeptical', partOfSpeech:'adjective', definition:'Having doubts about something; not easily convinced', japaneseDefinition:'疑念を持つ、簡単には納得しない、懐疑的な', difficulty:'beginner' },
     { id:'b03', word:'Marvel', partOfSpeech:'noun', definition:'A person, thing, or event that causes great wonder or admiration', japaneseDefinition:'驚嘆や称賛を引き起こす人・物・出来事、驚異', difficulty:'beginner' },
@@ -72,7 +179,6 @@ const VocabularyApp = () => {
     { id:'b28', word:'Assemblage', partOfSpeech:'noun', definition:'A collection or gathering of things or people; a group of diverse elements together', japaneseDefinition:'物や人の集まりや集合、多様な要素が一緒になったグループ', difficulty:'beginner' },
     { id:'b29', word:'Iridescent', partOfSpeech:'adjective', definition:'Showing shifting colors that change when seen from different angles, like a rainbow', japaneseDefinition:'見る角度によって変わる虹のように移り変わる色を示す、玉虫色の', difficulty:'beginner' },
     { id:'b30', word:'Depletion', partOfSpeech:'noun', definition:'The reduction of something by a large amount; the using up of a resource', japaneseDefinition:'何かの大幅な減少、資源の使い尽くし、枯渇', difficulty:'beginner' },
-    // ── INTERMEDIATE 40語 ──
     { id:'i01', word:'Unintentional', partOfSpeech:'adjective', definition:'Not done on purpose; happening without deliberate intent or planning', japaneseDefinition:'意図的でない、故意ではなく起こる、意図せざる', difficulty:'intermediate' },
     { id:'i02', word:'Anthropomorphize', partOfSpeech:'verb', definition:'To attribute human characteristics, emotions, or behavior to non-human things', japaneseDefinition:'人間以外のものに人間の特性・感情・行動を帰属させる', difficulty:'intermediate' },
     { id:'i03', word:'Hypothesis', partOfSpeech:'noun', definition:'A proposed explanation for a phenomenon, subject to testing and verification', japaneseDefinition:'現象に対する暫定的な説明、検証の対象となる仮説', difficulty:'intermediate' },
@@ -113,7 +219,6 @@ const VocabularyApp = () => {
     { id:'i38', word:'Subsistence', partOfSpeech:'noun', definition:'The action of maintaining oneself at a minimum level; barely enough to survive', japaneseDefinition:'最低限の生活を維持する行為、生き延びるためのわずかな量の生計', difficulty:'intermediate' },
     { id:'i39', word:'Geopolitical', partOfSpeech:'adjective', definition:'Relating to politics especially as influenced by geography and the relations between nations', japaneseDefinition:'特に地理と国家間の関係に影響された政治に関する、地政学的な', difficulty:'intermediate' },
     { id:'i40', word:'Capitalization', partOfSpeech:'noun', definition:"The total market value of a company's shares; the use of financial capital for investment", japaneseDefinition:'会社の株式の総市場価値、投資のための金融資本の活用、資本化', difficulty:'intermediate' },
-    // ── ADVANCED 30語 ──
     { id:'a01', word:'Epistemological', partOfSpeech:'adjective', definition:'Relating to the theory of knowledge and the study of how we know what we know', japaneseDefinition:'知識の理論と、知識をどのように得るかの研究に関する、認識論的な', difficulty:'advanced' },
     { id:'a02', word:'Eugenics', partOfSpeech:'noun', definition:'The practice of attempting to improve human genetics by controlling reproduction', japaneseDefinition:'生殖を管理することで人類の遺伝的性質を改善しようとする思想・実践', difficulty:'advanced' },
     { id:'a03', word:'Subjectivity', partOfSpeech:'noun', definition:'The quality of being based on personal feelings or opinions rather than external facts', japaneseDefinition:'外部の事実ではなく個人の感情や意見に基づく性質、主観性', difficulty:'advanced' },
@@ -140,13 +245,12 @@ const VocabularyApp = () => {
     { id:'a24', word:'Calculus', partOfSpeech:'noun', definition:'A system of reasoning or calculation; a method for weighing competing considerations', japaneseDefinition:'推論または計算のシステム、競合する考慮事項を検討するための方法', difficulty:'advanced' },
     { id:'a25', word:'Strategic amnesia', partOfSpeech:'phrase', definition:'The deliberate or convenient forgetting of inconvenient historical facts by institutions', japaneseDefinition:'機関による都合の悪い歴史的事実の意図的または都合のよい忘却', difficulty:'advanced' },
     { id:'a26', word:'Promiscuity', partOfSpeech:'noun', definition:'The quality of being indiscriminate or lacking selectivity in application or use', japaneseDefinition:'適用や使用において無差別または選択性を欠く性質', difficulty:'advanced' },
-    { id:'a27', word:'Irresolvable', partOfSpeech:'adjective', definition:'Impossible to settle, solve, or bring to a satisfactory conclusion', japaneseDefinition:'解決・解決・満足のいく結論に達することが不可能な、解決不能な', difficulty:'advanced' },
+    { id:'a27', word:'Irresolvable', partOfSpeech:'adjective', definition:'Impossible to settle, solve, or bring to a satisfactory conclusion', japaneseDefinition:'解決・満足のいく結論に達することが不可能な、解決不能な', difficulty:'advanced' },
     { id:'a28', word:'Supersystem', partOfSpeech:'noun', definition:'A system composed of multiple interconnected systems forming a larger integrated whole', japaneseDefinition:'より大きな統合された全体を形成する複数の相互接続されたシステムで構成されるシステム', difficulty:'advanced' },
     { id:'a29', word:'Disembodied', partOfSpeech:'adjective', definition:'Separated from or existing without a physical body; lacking material or concrete form', japaneseDefinition:'物理的な身体から分離された・なしに存在する、物質的または具体的な形を欠く', difficulty:'advanced' },
     { id:'a30', word:'Geographer', partOfSpeech:'noun', definition:'A specialist in geography who studies the physical and human features of the earth', japaneseDefinition:'地球の物理的・人文的特徴を研究する地理学の専門家', difficulty:'advanced' },
   ];
 
-  // ── ユーティリティ ──
   const getSections = (diff) => {
     const vocab = vocabularyData.filter(v => v.difficulty === diff);
     const sections = [];
@@ -154,21 +258,13 @@ const VocabularyApp = () => {
     return sections;
   };
 
-  // 弱点克服：正答率が低い順に count 語を選ぶ（未回答は率0扱いで優先）
   const getWeakWords = (diff, count = SECTION_SIZE) => {
-    const vocab = (diff === 'all')
-      ? vocabularyData
-      : vocabularyData.filter(v => v.difficulty === diff);
+    const vocab = diff === 'all' ? vocabularyData : vocabularyData.filter(v => v.difficulty === diff);
     return [...vocab]
-      .map(w => ({
-        ...w,
-        rate: wordStats[w.id]?.total > 0
-          ? wordStats[w.id].correct / wordStats[w.id].total
-          : -1   // 未解答は最優先
-      }))
+      .map(w => ({ ...w, rate: wordStats[w.id]?.total > 0 ? wordStats[w.id].correct / wordStats[w.id].total : -1 }))
       .sort((a, b) => a.rate - b.rate)
       .slice(0, count)
-      .sort(() => Math.random() - 0.5); // 内部順はランダム
+      .sort(() => Math.random() - 0.5);
   };
 
   const currentWord = selectedVocab[currentWordIndex] || {};
@@ -200,7 +296,6 @@ const VocabularyApp = () => {
     window.speechSynthesis.speak(utt);
   };
 
-  // 選択肢クリック → 記録 → 500ms後に進む
   const handleOptionSelect = (option) => {
     if (lastSelected !== null) return;
     const newAnswers = { ...quizAnswers, [currentWord.id]: option };
@@ -213,28 +308,18 @@ const VocabularyApp = () => {
       if (currentWordIndex < selectedVocab.length - 1) {
         setCurrentWordIndex(i => i + 1);
       } else {
-        // クイズ終了 → wordStats を一括更新
         setWordStats(prev => {
           const updated = { ...prev };
           selectedVocab.forEach(w => {
             const isCorrect = newAnswers[w.id] === w.definition;
-            updated[w.id] = {
-              correct: (updated[w.id]?.correct || 0) + (isCorrect ? 1 : 0),
-              total:   (updated[w.id]?.total   || 0) + 1
-            };
+            updated[w.id] = { correct:(updated[w.id]?.correct||0)+(isCorrect?1:0), total:(updated[w.id]?.total||0)+1 };
           });
           return updated;
         });
         let correct = 0;
         selectedVocab.forEach(w => { if (newAnswers[w.id] === w.definition) correct++; });
         const score = Math.round((correct / selectedVocab.length) * 100);
-        setScores(prev => [...prev, {
-          score,
-          date: new Date().toLocaleDateString(),
-          difficulty,
-          sectionIndex,
-          mode: quizMode
-        }]);
+        setScores(prev => [...prev, { score, date: new Date().toLocaleDateString(), difficulty, sectionIndex, mode: quizMode }]);
         setShowResults(true);
       }
     }, 500);
@@ -246,49 +331,36 @@ const VocabularyApp = () => {
     return Math.round((correct / selectedVocab.length) * 100);
   };
 
-  // 通常モード：セクション開始
   const startQuiz = (section, secIdx) => {
     const shuffled = [...section].sort(() => Math.random() - 0.5);
-    setSelectedVocab(shuffled);
-    setAllQuizOptions(buildAllOptions(shuffled));
-    setSectionIndex(secIdx);
-    setQuizMode('normal');
-    setCurrentWordIndex(0); setQuizAnswers({});
-    setShowResults(false); setShowJapanese(false);
-    setShowOptionJapanese({}); setLastSelected(null);
-    setScreen('quiz');
+    setSelectedVocab(shuffled); setAllQuizOptions(buildAllOptions(shuffled));
+    setSectionIndex(secIdx); setQuizMode('normal');
+    setCurrentWordIndex(0); setQuizAnswers({}); setShowResults(false);
+    setShowJapanese(false); setShowOptionJapanese({}); setLastSelected(null); setScreen('quiz');
   };
 
-  // 弱点克服モード：難易度を選んで開始
   const startWeakQuiz = (diff) => {
     const weak = getWeakWords(diff);
-    setSelectedVocab(weak);
-    setAllQuizOptions(buildAllOptions(weak));
-    setDifficulty(diff);
-    setSectionIndex(null);
-    setQuizMode('weak');
-    setCurrentWordIndex(0); setQuizAnswers({});
-    setShowResults(false); setShowJapanese(false);
-    setShowOptionJapanese({}); setLastSelected(null);
-    setScreen('quiz');
+    setSelectedVocab(weak); setAllQuizOptions(buildAllOptions(weak));
+    setDifficulty(diff); setSectionIndex(null); setQuizMode('weak');
+    setCurrentWordIndex(0); setQuizAnswers({}); setShowResults(false);
+    setShowJapanese(false); setShowOptionJapanese({}); setLastSelected(null); setScreen('quiz');
   };
 
   const handleRetry = () => {
-    if (quizMode === 'weak') {
-      startWeakQuiz(difficulty);
-    } else {
-      const section = getSections(difficulty)[sectionIndex];
-      const shuffled = [...section].sort(() => Math.random() - 0.5);
-      setSelectedVocab(shuffled);
-      setAllQuizOptions(buildAllOptions(shuffled));
-      setCurrentWordIndex(0); setQuizAnswers({});
-      setShowResults(false); setShowJapanese(false);
-      setShowOptionJapanese({}); setLastSelected(null);
-    }
+    if (quizMode === 'weak') { startWeakQuiz(difficulty); return; }
+    const section = getSections(difficulty)[sectionIndex];
+    const shuffled = [...section].sort(() => Math.random() - 0.5);
+    setSelectedVocab(shuffled); setAllQuizOptions(buildAllOptions(shuffled));
+    setCurrentWordIndex(0); setQuizAnswers({}); setShowResults(false);
+    setShowJapanese(false); setShowOptionJapanese({}); setLastSelected(null);
   };
 
   const handleSelectDifficulty = (diff) => { setDifficulty(diff); setScreen('sections'); };
-  const handleBackToSections  = () => { setScreen(quizMode === 'weak' ? 'weak_select' : 'sections'); setShowResults(false); setSelectedVocab([]); setCurrentWordIndex(0); setQuizAnswers({}); };
+  const handleBackToSections = () => {
+    setScreen(quizMode === 'weak' ? 'weak_select' : 'sections');
+    setShowResults(false); setSelectedVocab([]); setCurrentWordIndex(0); setQuizAnswers({});
+  };
   const handleBackToHome = () => {
     setDifficulty(null); setSectionIndex(null); setSelectedVocab([]);
     setCurrentWordIndex(0); setQuizAnswers({}); setShowResults(false);
@@ -296,103 +368,81 @@ const VocabularyApp = () => {
     setAllQuizOptions({}); setLastSelected(null); setScreen('home');
   };
 
-  const diffLabel = (d) =>
-    d === 'beginner' ? '初心者' : d === 'intermediate' ? '中級者' : d === 'advanced' ? '上級者' : '全難易度';
-
-  const getWordRate = (id) => {
-    const s = wordStats[id];
-    if (!s || s.total === 0) return null;
-    return Math.round((s.correct / s.total) * 100);
-  };
-
-  const clearAllData = () => {
-    if (window.confirm('全ての学習記録を削除しますか？')) {
-      localStorage.removeItem('vocab_scores');
-      localStorage.removeItem('vocab_word_stats');
-      setScores([]); setWordStats({});
-    }
-  };
+  const diffLabel = (d) => d==='beginner'?'初心者':d==='intermediate'?'中級者':d==='advanced'?'上級者':'全難易度';
+  const getWordRate = (id) => { const s=wordStats[id]; if(!s||s.total===0) return null; return Math.round((s.correct/s.total)*100); };
+  const clearAllData = () => { if(window.confirm('全ての学習記録を削除しますか？')){ localStorage.removeItem('vocab_scores'); localStorage.removeItem('vocab_word_stats'); setScores([]); setWordStats({}); } };
 
   return (
     <div className="container">
+      {visualModal && (
+        <div className="visual-overlay" onClick={() => setVisualModal(null)}>
+          <div className="visual-modal-box" onClick={e => e.stopPropagation()}>
+            <button className="visual-close-btn" onClick={() => setVisualModal(null)}>✕</button>
+            <WordVisualCard wordObj={visualModal} />
+            <p className="visual-definition">{visualModal.definition}</p>
+            <p className="visual-jp">{visualModal.japaneseDefinition}</p>
+          </div>
+        </div>
+      )}
+
       <div className="header">
         <h1>📚 Vocabulary Master</h1>
         <p>『Atlas of AI』Introduction の語彙を習得しよう</p>
       </div>
-
       <div className="nav">
-        <button onClick={() => { setView('home'); handleBackToHome(); }} className={view === 'home' ? 'active' : ''}>Home</button>
-        <button onClick={() => setView('progress')} className={view === 'progress' ? 'active' : ''}>Progress</button>
+        <button onClick={() => { setView('home'); handleBackToHome(); }} className={view==='home'?'active':''}>Home</button>
+        <button onClick={() => setView('progress')} className={view==='progress'?'active':''}>Progress</button>
       </div>
 
-      {/* ══ ホーム ══ */}
-      {view === 'home' && screen === 'home' && (
+      {view==='home' && screen==='home' && (
         <div className="home-section">
           <div className="stats-grid">
             <div className="stat-card"><div className="stat-label">Total Words</div><div className="stat-value">{vocabularyData.length}</div></div>
             <div className="stat-card"><div className="stat-label">Words / Section</div><div className="stat-value">{SECTION_SIZE}</div></div>
             <div className="stat-card"><div className="stat-label">Quizzes Done</div><div className="stat-value">{scores.length}</div></div>
-            {scores.length > 0 && <div className="stat-card"><div className="stat-label">Average Score</div><div className="stat-value">{Math.round(scores.reduce((a,s)=>a+s.score,0)/scores.length)}%</div></div>}
+            {scores.length>0&&<div className="stat-card"><div className="stat-label">Average Score</div><div className="stat-value">{Math.round(scores.reduce((a,s)=>a+s.score,0)/scores.length)}%</div></div>}
           </div>
-
           <div className="difficulty-section">
             <h2>通常モード — 難易度を選択</h2>
             <div className="difficulty-grid">
-              {[{key:'beginner',label:'初心者',desc:'基本的な語彙を習得'},{key:'intermediate',label:'中級者',desc:'より複雑な概念を学習'},{key:'advanced',label:'上級者',desc:'高度な学術用語をマスター'}].map(({key,label,desc})=>{
-                const secs = getSections(key);
-                return (
-                  <div key={key} className="difficulty-card" onClick={()=>handleSelectDifficulty(key)}>
-                    <div className="difficulty-level">{label}</div>
-                    <div className="difficulty-desc">{desc}</div>
-                    <div className="word-count">{vocabularyData.filter(v=>v.difficulty===key).length}語 / {secs.length}セクション</div>
-                  </div>
-                );
-              })}
+              {[{key:'beginner',label:'初心者',desc:'基本的な語彙を習得'},{key:'intermediate',label:'中級者',desc:'より複雑な概念を学習'},{key:'advanced',label:'上級者',desc:'高度な学術用語をマスター'}].map(({key,label,desc})=>(
+                <div key={key} className="difficulty-card" onClick={()=>handleSelectDifficulty(key)}>
+                  <div className="difficulty-level">{label}</div>
+                  <div className="difficulty-desc">{desc}</div>
+                  <div className="word-count">{vocabularyData.filter(v=>v.difficulty===key).length}語 / {getSections(key).length}セクション</div>
+                </div>
+              ))}
             </div>
           </div>
-
           <div className="weak-section">
             <h2>弱点克服モード</h2>
             <p className="weak-desc">正答率が低い単語を優先して出題します。未回答の単語は最優先で出題されます。</p>
-            <div className="weak-grid">
-              <div className="weak-card" onClick={()=>setScreen('weak_select')}>
-                <div className="weak-icon">🎯</div>
-                <div className="weak-title">弱点克服モードを始める</div>
-                <div className="weak-sub">難易度を選んで5問に挑戦</div>
-              </div>
+            <div className="weak-card" onClick={()=>setScreen('weak_select')}>
+              <div className="weak-icon">🎯</div>
+              <div><div className="weak-title">弱点克服モードを始める</div><div className="weak-sub">難易度を選んで5問に挑戦</div></div>
             </div>
           </div>
         </div>
       )}
 
-      {/* ══ セクション選択 ══ */}
-      {view === 'home' && screen === 'sections' && difficulty && (
+      {view==='home' && screen==='sections' && difficulty && (
         <div className="section-select">
           <div className="section-header">
             <button className="back-link" onClick={handleBackToHome}>← 難易度選択に戻る</button>
             <h2>{diffLabel(difficulty)} — セクションを選択</h2>
-            <p className="section-sub">各セクションは {SECTION_SIZE} 問です。セクション内の出題順はランダムです。</p>
+            <p className="section-sub">各セクションは {SECTION_SIZE} 問。出題順はランダムです。</p>
           </div>
           <div className="section-grid">
             {getSections(difficulty).map((section, idx) => {
-              const sectionScores = scores.filter(s => s.difficulty === difficulty && s.sectionIndex === idx && s.mode === 'normal');
-              const bestScore = sectionScores.length > 0 ? Math.max(...sectionScores.map(s=>s.score)) : null;
+              const best = scores.filter(s=>s.difficulty===difficulty&&s.sectionIndex===idx&&s.mode==='normal');
+              const bestScore = best.length>0?Math.max(...best.map(s=>s.score)):null;
               return (
-                <div key={idx} className="section-card" onClick={()=>startQuiz(section, idx)}>
-                  <div className="section-number">Section {idx + 1}</div>
+                <div key={idx} className="section-card" onClick={()=>startQuiz(section,idx)}>
+                  <div className="section-number">Section {idx+1}</div>
                   <div className="section-words">
-                    {section.map(w => {
-                      const rate = getWordRate(w.id);
-                      return (
-                        <span key={w.id} className={`section-word-tag ${rate !== null && rate < 50 ? 'weak-tag' : ''}`}>
-                          {w.word}{rate !== null ? ` ${rate}%` : ''}
-                        </span>
-                      );
-                    })}
+                    {section.map(w=>{const rate=getWordRate(w.id);return(<span key={w.id} className={`section-word-tag ${rate!==null&&rate<50?'weak-tag':''}`}>{w.word}{rate!==null?` ${rate}%`:''}</span>);})}
                   </div>
-                  {bestScore !== null
-                    ? <div className="section-score">Best: {bestScore}%</div>
-                    : <div className="section-score new">未挑戦</div>}
+                  {bestScore!==null?<div className="section-score">Best: {bestScore}%</div>:<div className="section-score new">未挑戦</div>}
                 </div>
               );
             })}
@@ -400,8 +450,7 @@ const VocabularyApp = () => {
         </div>
       )}
 
-      {/* ══ 弱点克服：難易度選択 ══ */}
-      {view === 'home' && screen === 'weak_select' && (
+      {view==='home' && screen==='weak_select' && (
         <div className="section-select">
           <div className="section-header">
             <button className="back-link" onClick={handleBackToHome}>← ホームに戻る</button>
@@ -413,56 +462,54 @@ const VocabularyApp = () => {
               <div key={key} className="difficulty-card weak-diff-card" onClick={()=>startWeakQuiz(key)}>
                 <div className="difficulty-level">{label}</div>
                 <div className="difficulty-desc">{desc}</div>
-                <div className="word-count">
-                  {(() => {
-                    const vocab = key === 'all' ? vocabularyData : vocabularyData.filter(v=>v.difficulty===key);
-                    const attempted = vocab.filter(w => wordStats[w.id]?.total > 0).length;
-                    return `解答済: ${attempted} / ${vocab.length}語`;
-                  })()}
-                </div>
+                <div className="word-count">{(()=>{const v=key==='all'?vocabularyData:vocabularyData.filter(w=>w.difficulty===key);return `解答済: ${v.filter(w=>wordStats[w.id]?.total>0).length}/${v.length}語`;})()}</div>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* ══ クイズ画面 ══ */}
-      {view === 'home' && screen === 'quiz' && !showResults && (
+      {view==='home' && screen==='quiz' && !showResults && (
         <div className="quiz-card">
           <div className="quiz-meta">
-            {quizMode === 'weak'
-              ? <span className="quiz-meta-label weak-meta">🎯 弱点克服モード — {diffLabel(difficulty)}</span>
-              : <span className="quiz-meta-label">{diffLabel(difficulty)} — Section {sectionIndex + 1}</span>
-            }
+            {quizMode==='weak'
+              ?<span className="quiz-meta-label weak-meta">🎯 弱点克服 — {diffLabel(difficulty)}</span>
+              :<span className="quiz-meta-label">{diffLabel(difficulty)} — Section {sectionIndex+1}</span>}
           </div>
           <div className="progress-bar"><div className="progress-fill" style={{width:`${((currentWordIndex+1)/selectedVocab.length)*100}%`}}/></div>
           <div className="progress-text">問題 {currentWordIndex+1} / {selectedVocab.length}</div>
-
           <div className="quiz-content">
             <h2 className="quiz-question">次の定義に合う単語は？</h2>
-            <p className="definition-highlight">{currentWord.definition}</p>
-            {showJapanese && (
-              <div className="japanese-translation">
-                <strong>日本語訳：</strong> {currentWord.japaneseDefinition}
+            <div className="quiz-layout">
+              {/* 左：定義文・ボタン・選択肢 */}
+              <div className="quiz-main">
+                <p className="definition-highlight">{currentWord.definition}</p>
+                {showJapanese&&<div className="japanese-translation"><strong>日本語訳：</strong> {currentWord.japaneseDefinition}</div>}
+                <div className="audio-button-group">
+                  <button className={`audio-button ${isSpeaking?'speaking':''}`} onClick={()=>speak(currentWord.definition)}>📢 問題文を発音</button>
+                  <button className={`toggle-button ${showJapanese?'active':''}`} onClick={()=>setShowJapanese(v=>!v)}>🇯🇵 日本語訳</button>
+                </div>
+                <div className="speed-control">
+                  <label className="speed-label">発音スピード：<strong>{speechRate.toFixed(1)}x</strong></label>
+                  <input type="range" min="0.5" max="1.5" step="0.1" value={speechRate} onChange={e=>setSpeechRate(parseFloat(e.target.value))} className="speed-slider"/>
+                  <div className="speed-markers"><span>遅い (0.5x)</span><span>普通 (1.0x)</span><span>速い (1.5x)</span></div>
+                </div>
               </div>
-            )}
-            <div className="audio-button-group">
-              <button className={`audio-button ${isSpeaking?'speaking':''}`} onClick={()=>speak(currentWord.definition)}>📢 問題文を発音</button>
-              <button className={`toggle-button ${showJapanese?'active':''}`} onClick={()=>setShowJapanese(v=>!v)}>🇯🇵 日本語訳</button>
-            </div>
-            <div className="speed-control">
-              <label className="speed-label">発音スピード：<strong>{speechRate.toFixed(1)}x</strong></label>
-              <input type="range" min="0.5" max="1.5" step="0.1" value={speechRate} onChange={e=>setSpeechRate(parseFloat(e.target.value))} className="speed-slider"/>
-              <div className="speed-markers"><span>遅い (0.5x)</span><span>普通 (1.0x)</span><span>速い (1.5x)</span></div>
+              {/* 右：ビジュアルカード（テスト：b01のみ） */}
+              {wordVisuals[currentWord.id] && (
+                <div className="quiz-visual-side">
+                  <WordVisualCard wordObj={currentWord} />
+                </div>
+              )}
             </div>
             <div className="quiz-options">
-              {quizOptions.map((option, idx) => {
-                const wordObj = vocabularyData.find(v => v.definition === option);
-                const wordLabel = wordObj?.word || '';
-                const wordId = wordObj?.id || '';
-                const isSelected = quizAnswers[currentWord.id] === option;
-                const jpShown = showOptionJapanese[wordId];
-                return (
+              {quizOptions.map((option,idx)=>{
+                const wordObj=vocabularyData.find(v=>v.definition===option);
+                const wordLabel=wordObj?.word||'';
+                const wordId=wordObj?.id||'';
+                const isSelected=quizAnswers[currentWord.id]===option;
+                const jpShown=showOptionJapanese[wordId];
+                return(
                   <div key={idx} className="quiz-option-wrapper">
                     <div className={`quiz-option ${isSelected?'selected':''} ${lastSelected===option?'just-selected':''}`} onClick={()=>handleOptionSelect(option)}>
                       <span className="option-text">{wordLabel}</span>
@@ -471,7 +518,7 @@ const VocabularyApp = () => {
                         <button className={`inline-jp-btn ${jpShown?'active':''}`} onClick={e=>{e.stopPropagation();setShowOptionJapanese(prev=>({...prev,[wordId]:!prev[wordId]}));}} title="日本語訳">🇯🇵</button>
                       </div>
                     </div>
-                    {jpShown && wordObj && <div className="option-japanese">{wordObj.japaneseDefinition}</div>}
+                    {jpShown&&wordObj&&<div className="option-japanese">{wordObj.japaneseDefinition}</div>}
                   </div>
                 );
               })}
@@ -483,27 +530,23 @@ const VocabularyApp = () => {
         </div>
       )}
 
-      {/* ══ 結果 ══ */}
-      {view === 'home' && screen === 'quiz' && showResults && (
+      {view==='home' && screen==='quiz' && showResults && (
         <div className="results-card">
-          <div className="results-label">
-            {quizMode === 'weak'
-              ? `🎯 弱点克服モード — ${diffLabel(difficulty)}`
-              : `${diffLabel(difficulty)} — Section ${sectionIndex + 1}`}
-          </div>
+          <div className="results-label">{quizMode==='weak'?`🎯 弱点克服 — ${diffLabel(difficulty)}`:`${diffLabel(difficulty)} — Section ${sectionIndex+1}`}</div>
           <div className="results-score">{calculateFinalScore()}%</div>
           <div className="results-message">{calculateFinalScore()>=80?'🎉 素晴らしい！':calculateFinalScore()>=60?'👍 良くできました！':'📚 もう一度挑戦しましょう！'}</div>
           <div className="feedback-section">
-            {selectedVocab.map((word, idx) => {
-              const isCorrect = quizAnswers[word.id] === word.definition;
-              const rate = getWordRate(word.id);
-              return (
+            {selectedVocab.map((word,idx)=>{
+              const isCorrect=quizAnswers[word.id]===word.definition;
+              const rate=getWordRate(word.id);
+              return(
                 <div key={idx} className="feedback-item">
                   <div className={`feedback-header ${isCorrect?'correct':'incorrect'}`}>
-                    {isCorrect ? '✓' : '✗'} {word.word}
-                    {rate !== null && <span className="word-rate-badge" style={{background: rate>=70?'#d4edda':rate>=40?'#fff3cd':'#f8d7da', color: rate>=70?'#155724':rate>=40?'#856404':'#721c24'}}>{rate}%</span>}
+                    <span>{isCorrect?'✓':'✗'} {word.word}</span>
+                    {rate!==null&&<span className="word-rate-badge" style={{background:rate>=70?'#d4edda':rate>=40?'#fff3cd':'#f8d7da',color:rate>=70?'#155724':rate>=40?'#856404':'#721c24'}}>{rate}%</span>}
+                    <button className="result-visual-btn" onClick={()=>setVisualModal(word)}>🖼️</button>
                   </div>
-                  {!isCorrect && <div className="feedback-detail">正解の定義: {word.definition}</div>}
+                  {!isCorrect&&<div className="feedback-detail">正解の定義: {word.definition}</div>}
                 </div>
               );
             })}
@@ -515,46 +558,32 @@ const VocabularyApp = () => {
         </div>
       )}
 
-      {/* ══ 進捗 ══ */}
-      {view === 'progress' && (
+      {view==='progress' && (
         <div className="progress-section">
           <h2>学習進捗</h2>
           <div className="progress-stats">
             <div className="progress-card"><div className="progress-label">完了したクイズ</div><div className="progress-value">{scores.length}</div></div>
-            {scores.length > 0 && <>
-              <div className="progress-card"><div className="progress-label">平均スコア</div><div className="progress-value">{Math.round(scores.reduce((a,s)=>a+s.score,0)/scores.length)}%</div></div>
-              <div className="progress-card"><div className="progress-label">最高スコア</div><div className="progress-value">{Math.max(...scores.map(s=>s.score))}%</div></div>
-            </>}
-            <div className="progress-card">
-              <div className="progress-label">解答済み単語</div>
-              <div className="progress-value">{Object.keys(wordStats).filter(id=>wordStats[id].total>0).length}/{vocabularyData.length}</div>
-            </div>
+            {scores.length>0&&<><div className="progress-card"><div className="progress-label">平均スコア</div><div className="progress-value">{Math.round(scores.reduce((a,s)=>a+s.score,0)/scores.length)}%</div></div><div className="progress-card"><div className="progress-label">最高スコア</div><div className="progress-value">{Math.max(...scores.map(s=>s.score))}%</div></div></>}
+            <div className="progress-card"><div className="progress-label">解答済み単語</div><div className="progress-value">{Object.keys(wordStats).filter(id=>wordStats[id].total>0).length}/{vocabularyData.length}</div></div>
           </div>
-
-          {/* 単語ごとの正答率 */}
           <div className="word-stats-section">
             <h3>単語別 正答率</h3>
-            {['beginner','intermediate','advanced'].map(diff => {
-              const vocab = vocabularyData.filter(v=>v.difficulty===diff);
-              const attempted = vocab.filter(w=>wordStats[w.id]?.total>0);
-              if (attempted.length === 0) return null;
-              return (
+            {['beginner','intermediate','advanced'].map(diff=>{
+              const vocab=vocabularyData.filter(v=>v.difficulty===diff);
+              const attempted=vocab.filter(w=>wordStats[w.id]?.total>0);
+              if(attempted.length===0) return null;
+              return(
                 <div key={diff} className="diff-stats-group">
                   <h4>{diffLabel(diff)}</h4>
-                  {[...attempted].sort((a,b)=>{
-                    const rA = wordStats[a.id].correct/wordStats[a.id].total;
-                    const rB = wordStats[b.id].correct/wordStats[b.id].total;
-                    return rA - rB; // 正答率が低い順
-                  }).map(w => {
-                    const stat = wordStats[w.id];
-                    const rate = Math.round((stat.correct/stat.total)*100);
-                    return (
+                  {[...attempted].sort((a,b)=>(wordStats[a.id].correct/wordStats[a.id].total)-(wordStats[b.id].correct/wordStats[b.id].total)).map(w=>{
+                    const stat=wordStats[w.id];
+                    const rate=Math.round((stat.correct/stat.total)*100);
+                    return(
                       <div key={w.id} className="word-stat-row">
                         <span className="word-stat-name">{w.word}</span>
-                        <div className="word-stat-bar-wrap">
-                          <div className="word-stat-bar" style={{width:`${rate}%`, background: rate>=70?'#28a745':rate>=40?'#ffc107':'#dc3545'}}/>
-                        </div>
+                        <div className="word-stat-bar-wrap"><div className="word-stat-bar" style={{width:`${rate}%`,background:rate>=70?'#28a745':rate>=40?'#ffc107':'#dc3545'}}/></div>
                         <span className="word-stat-pct">{stat.correct}/{stat.total} ({rate}%)</span>
+                        <button className="stat-visual-btn" onClick={()=>setVisualModal(w)}>🖼️</button>
                       </div>
                     );
                   })}
@@ -562,24 +591,20 @@ const VocabularyApp = () => {
               );
             })}
           </div>
-
-          {scores.length > 0 && (
+          {scores.length>0&&(
             <div className="quiz-history">
               <h3>クイズ履歴</h3>
-              {[...scores].reverse().map((score, idx) => (
+              {[...scores].reverse().map((score,idx)=>(
                 <div key={idx} className="history-item">
                   <span className="difficulty-badge">{diffLabel(score.difficulty)}</span>
-                  {score.mode === 'weak'
-                    ? <span className="weak-badge">🎯 弱点</span>
-                    : score.sectionIndex !== null && <span className="section-badge">Sec {score.sectionIndex+1}</span>}
+                  {score.mode==='weak'?<span className="weak-badge">🎯 弱点</span>:score.sectionIndex!==null&&<span className="section-badge">Sec {score.sectionIndex+1}</span>}
                   <span>{score.date}</span>
                   <span className="score">{score.score}%</span>
                 </div>
               ))}
             </div>
           )}
-
-          <div style={{marginTop:'2rem', textAlign:'right'}}>
+          <div style={{marginTop:'2rem',textAlign:'right'}}>
             <button className="clear-btn" onClick={clearAllData}>🗑 学習記録をリセット</button>
           </div>
         </div>
